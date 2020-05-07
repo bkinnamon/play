@@ -71,6 +71,7 @@
     <div class="app" id="app">
       <div class="header">
         <div>
+          <p>Game ID: <strong>{{ gameID }}</strong></p>
           <h2>{{ playerString }}</h2>
           <p>
             {{ ready ? turnString : 'Waiting for another player...' }}
@@ -118,6 +119,7 @@
         },
         data: {
           board: [],
+          gameID: GAME_ID,
           symbol: null,
           yourTurn: false,
           ready: false,

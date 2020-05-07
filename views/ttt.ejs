@@ -17,7 +17,9 @@
         <button type="submit">Join</button>
       </form>
       <h2>Create</h2>
-      <button>Create</button>
+      <form method="POST">
+        <button type="submit">Create</button>
+      </form>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -35,8 +37,8 @@
             if (!this.gameID) return;
             // TODO validate ID
             window.location.href += window.location.href.endsWith('/')
-              ? this.gameID
-              : `/${this.gameID}`;
+              ? this.gameID.toString().toUpperCase()
+              : `/${this.gameID}`.toUpperCase();
           },
         },
       });

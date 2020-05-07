@@ -1,3 +1,7 @@
+const id = require('../common/id');
+
+const getNewID = () => id.generate(4);
+
 const state = {
   players: {
     X: null,
@@ -91,5 +95,6 @@ const setup = (socket, io) => {
 };
 
 module.exports = {
+  getNewID,
   setup,
 };
