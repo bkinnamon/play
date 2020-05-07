@@ -72,10 +72,16 @@
       <div class="header">
         <div>
           <p>Game ID: <strong>{{ gameID }}</strong></p>
-          <h2>{{ playerString }}</h2>
-          <p>
-            {{ ready ? turnString : 'Waiting for another player...' }}
-          </p>
+          <div v-show="winner">
+            <h2>You {{ winner === symbol ? 'won!' : 'lost' }}</h2>
+            <p>{{ winner }}</p>
+          </div>
+          <div v-show="!winner">
+            <h2>{{ playerString }}</h2>
+            <p>
+              {{ ready ? turnString : 'Waiting for another player...' }}
+            </p>
+          </div>
         </div>
         <button class="btn-reset" @click="reset">Reset</button>
       </div>
@@ -99,7 +105,7 @@
       const GAME_ID = '<%= gameID %>';
 
       const socket = io();
-      socket.emit('join', 'ttt');
+      socket.emit('join', { game: 'ttt', id: GAME_ID });
 
       const app = new Vue({
         el: '#app',
@@ -123,11 +129,12 @@
           symbol: null,
           yourTurn: false,
           ready: false,
+          winner: null,
         },
         methods: {
           move(index) {
             if (this.yourTurn) {
-              socket.emit('move', index);
+              socket.emit('move', {index});
             }
           },
           reset() {
@@ -136,21 +143,25 @@
         },
       });
 
-      socket.on('ready', (isReady) => {
+      socket.on('ready', ({isReady}) => {
+        console.log('ready');
         app.ready = isReady;
       });
 
-      socket.on('symbol', (s) => {
-        app.symbol = s;
+      socket.on('symbol', ({symbol}) => {
+        console.log('symbol', symbol);
+        app.symbol = symbol;
       });
 
-      socket.on('board', ({ board }) => {
+      socket.on('update', ({ board, turn }) => {
+        console.log('update', board, turn);
+        app.yourTurn = turn === app.symbol;
         app.board = board;
       });
 
-      socket.on('turn', ({ yourTurn }) => {
-        app.yourTurn = yourTurn;
-      });
+      socket.on('winner', ({ winner }) => {
+        app.winner = winner;
+      })
     </script>
   </body>
 </html>

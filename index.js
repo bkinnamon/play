@@ -19,10 +19,12 @@ app.get('/', (req, res) => {
 app.use('/ttt', tttRoutes);
 
 io.on('connect', (socket) => {
-  socket.on('join', (game) => {
+  socket.on('join', ({ game, id }) => {
     switch (game) {
       case 'ttt':
-        ttt.setup(socket, io);
+        if (!ttt.join(io, socket, id)) {
+          socket.emit('error', `Unable to join game: ${id}`);
+        }
         break;
       default:
         socket.emit('error', `Unknown game: ${game}`);

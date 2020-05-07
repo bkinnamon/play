@@ -1,11 +1,11 @@
-const { getNewID } = require('../games/ttt');
+const { createGame } = require('../games/ttt');
 
 const index = (req, res) => {
   res.render('ttt');
 };
 
 const create = (req, res) => {
-  res.redirect(`/ttt/${getNewID()}`);
+  res.redirect(`/ttt/${createGame()}`);
 };
 
 const game = (req, res) => {
