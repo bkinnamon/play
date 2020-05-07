@@ -4,142 +4,41 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tic Tac Toe</title>
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      .app {
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
-        height: 80vmin;
-        margin: 1rem auto;
-        width: 80vmin;
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-      }
-      .btn-reset {
-        -webkit-appearance: none;
-        padding: 1rem;
-        background: lightgrey;
-        border: none;
-        color: black;
-        cursor: pointer;
-        transition: 200ms;
-      }
-      .btn-reset:hover {
-        background: grey;
-        color: lightgrey;
-      }
-      .board {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr 1fr;
-      }
-      .square {
-        -webkit-appearance: none;
-        border: none;
-        border-right: 1px solid black;
-        border-bottom: 1px solid black;
-        border-radius: 0;
-        color: black;
-        cursor: pointer;
-        font-size: 20vmin;
-        outline: none;
-        transition: 200ms;
-      }
-      .square:nth-child(3n) {
-        border-right: none;
-      }
-      .square:nth-child(n + 7) {
-        border-bottom: none;
-      }
-      .square:hover {
-        background: lightgrey;
-      }
-      .square:disabled {
-        color: black;
-      }
-    </style>
   </head>
   <body>
-    <div class="app" id="app">
-      <div class="header">
-        <div>
-          <h2>{{ playerString }}</h2>
-          <p>
-            {{ turnString }}
-          </p>
-        </div>
-        <button class="btn-reset" @click="reset">Reset</button>
-      </div>
-      <div class="board">
-        <button
-          class="square"
-          @click="move(index)"
-          :disabled="!yourTurn"
-          :key="index"
-          v-for="(symbol, index) in board"
-        >
-          {{ symbol }}
-        </button>
-      </div>
+    <div id="app">
+      <h1>Please join or create a game</h1>
+      <h2>Join</h2>
+      <form @submit.prevent="join">
+        <label>
+          <span>Game ID</span>
+          <input type="text" placeholder="######" v-model="gameID" />
+        </label>
+        <button type="submit">Join</button>
+      </form>
+      <h2>Create</h2>
+      <button>Create</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="socket.io/socket.io.js"></script>
-
     <script>
-      const socket = io();
-
       const app = new Vue({
         el: '#app',
-        computed: {
-          playerString() {
-            if (this.symbol) {
-              return `I am "${this.symbol}"`;
-            } else {
-              return 'I am spectating';
-            }
-          },
-          turnString() {
-            if (this.yourTurn) return 'It is your turn.';
-            if (this.symbol) return 'Please wait.';
-            return '';
-          },
-        },
         data: {
-          board: [],
-          symbol: null,
-          yourTurn: false,
+          gameID: null,
         },
         methods: {
-          move(index) {
-            if (this.yourTurn) {
-              socket.emit('move', index);
-            }
+          create() {
+            // TODO get a new ID
           },
-          reset() {
-            socket.emit('reset');
+          join() {
+            if (!this.gameID) return;
+            // TODO validate ID
+            window.location.href += window.location.href.endsWith('/')
+              ? this.gameID
+              : `/${this.gameID}`;
           },
         },
-      });
-
-      socket.on('symbol', (s) => {
-        app.symbol = s;
-      });
-
-      socket.on('board', ({ board }) => {
-        app.board = board;
-      });
-
-      socket.on('turn', ({ yourTurn }) => {
-        console.log(yourTurn);
-        app.yourTurn = yourTurn;
       });
     </script>
   </body>
